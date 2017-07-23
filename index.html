@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>case_瀑布流_定位式</title>
+	<style>
+		html {
+			font-family: sans-serif; /* 1 */
+			line-height: 1.15; /* 2 */
+			-ms-text-size-adjust: 100%; /* 3 */
+			-webkit-text-size-adjust: 100%; /* 3 */
+			font-size: 62.5%;/*10 ÷ 16 × 100% = 62.5%*/
+		}
+		* {
+			padding: 0;
+			margin :0;
+			list-style-type: none;
+			font-size: 1.2rem;
+		}
+		#box {
+			position: relative;
+			margin: 0 auto;
+			background: #e2e2e2;
+
+		}
+		#box div {
+			width: 230px;
+			/*height: auto;*/
+			/*margin-right: 8px;*/
+			/*margin-left: 1%;*/
+			position: absolute;
+		}
+/*		#box div:nth-child(3) {
+			margin-right: 0;
+		}*/
+		
+		#box img {
+			width: 100%;
+			/*height: auto;*/
+			/*display: block;*/
+		}
+		p {
+			text-align: center;
+			margin: 0;
+			padding: 30px 10px;
+			font-size: 36px;
+			font-weight: 700;
+			font-family: "微软雅黑";
+			position: fixed;
+			z-index: 1000;
+			top: 0;
+			left: 0;
+			width: 100%;
+			background: rgba(255,255,255,0.9);
+		}
+		
+	</style>
+</head>
+<body>
+	<p>向下滚动鼠标无限加载图片</p>
+	<div id="box">
+	</div>
+	<script type="text/javascript">
+		// 获得高度数组中最小的那个列
+		function checkHeight(obj){
+			var height = 10000000000;
+			var index = 0;
+			for(var a=0;a<obj.length;a++){
+				var now_height = obj[a];
+				if(now_height<height){
+					height = now_height;
+					index = a;
+				}
+			}
+			return index;
+		}
+		window.onload = function() {
+			// 0.获得box容器
+			var oBOX = document.getElementById("box");
+			// 1.获得浏览器的宽和高 div宽度默认为230
+			var vW = document.documentElement.clientWidth;
+			var vH = document.documentElement.clientHeight;
+			var default_width = 230 + 16 ;//左右各8px间距
+			// 2.计算容器内最多可容纳div个数 使用Math.floor向下取整
+			var div_num =Math.floor(vW / default_width);
+			// 3.获得剩余空间设置居中
+			// var k = vW - default_width * div_num;
+			oBOX.style.width = default_width * div_num  + "px" ;
+			oBOX.style.height = "1000px";
+			// oBOX.style.background = "#e2e2e2";
+			oBOX.style.margin = "0 auto";
+			// oBOX.style.margin = "'0 "+k/2+"'";
+			// 4.初始化一个高度数组
+			var arrHeight = [10,10,10,10,10,10,10];
+			// 5.循环创建元素
+			// createElement();
+			function createElement(){
+				for (var a = 1; a <18 ; a++) {
+					var oImg = document.createElement("img");
+					oImg.src = "./images/" + a + ".jpg";
+					var oDiv = document.createElement("div");
+					oDiv.style.width = 230 + "px";
+					// oDiv.style.height = oImg.offsetHeight;
+					// console.log(oDiv.style.height);
+					oDiv.appendChild(oImg);
+					// 6.获得最小的列
+					var min_index = checkHeight(arrHeight);
+					// 7.插入内容
+					oBOX.appendChild(oDiv);
+
+					// 8.设置div定位
+					// console.log(min_index);
+					// console.log(default_width);
+					oDiv.style.top = arrHeight[min_index] + "px";
+					oDiv.style.left = min_index * default_width + 8 + "px";
+					// 9.更新高度数组
+					console.log(arrHeight[min_index]);
+					arrHeight[min_index] += oImg.offsetHeight + 8;
+				}
+			}	
+			// 滚动事件
+			window.onscroll = function() {
+				var sT = document.documentElement.scrollTop || document.body.scrollTop;
+				// 滚动条高度 + 浏览器高度 = 内容区域的高度
+				// sT = document.body.scrollHeight;
+				if(sT+vH >=document.body.scrollHeight*0.9) {
+					createElement();
+				}
+			}
+
+		}
+
+
+
+
+
+	</script>
+</body>
+</html>
